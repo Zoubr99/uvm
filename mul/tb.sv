@@ -18,8 +18,6 @@ class tarnsaction_packet extends uvm_sequence_item;
 
 endclass: tarnsaction_packet
 ///////////////////////////////
-
-///////////////////////////////
 //  Class: generator
 class generator extends uvm_sequence#(generator);
     `uvm_object_utils(generator)
@@ -46,8 +44,6 @@ class generator extends uvm_sequence#(generator);
             end    
     endtask   
 endclass: generator
-///////////////////////////////////
-
 ///////////////////////////////////
 //  Class: drv
 class drv extends uvm_driver#(tarnsaction);
@@ -81,11 +77,8 @@ class drv extends uvm_driver#(tarnsaction);
             end
     endtask
 endclass: drv
-
 ///////////////////////////////////
-
 //  Class: mon
-//
 class mon extends uvm_monitor;
     `uvm_component_utils(mon);
 
@@ -108,7 +101,6 @@ class mon extends uvm_monitor;
             `uvm_error("DRV", "Unable to access interface")
     endfunction: build_phase
 
-
     /*---  UVM Run Phases              ---*/
     /*------------------------------------*/
     //  Function: start_of_simulation_phase
@@ -123,16 +115,11 @@ class mon extends uvm_monitor;
         end
     endtask
 endclass: mon
-
 ///////////////////////////////////
-
-
 class sco extends uvm_scroeboard;
     `uvm_object_utils(sco)
-
     uvm_analysis_imp#(tarnsaction, sco) recv;
     
-
     function new(input string inst = "sco", uvm_component parent = null);
         super.new(inst, parent);
     endfunction
@@ -150,16 +137,10 @@ class sco extends uvm_scroeboard;
         $display("-------------------------------------------------------");
     endfunction
 endclass: sco
-
 ///////////////////////////////////
-
 //  Class: agent
-//
 class agent extends uvm_agent;
     `uvm_component_utils(agent);
-
-
-
     //  Constructor: new
     function new(input string inst = "agent", uvm_component parent = null);
         super.new(inst, parent);
@@ -186,6 +167,5 @@ class agent extends uvm_agent;
         super.connect_phase(phase); 
         d.seq_item_port.connect(seqr.seq_item_export);
     endfunction
-
 endclass: agent
-
+///////////////////////////////////

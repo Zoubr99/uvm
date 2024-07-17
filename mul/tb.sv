@@ -169,3 +169,76 @@ class agent extends uvm_agent;
     endfunction
 endclass: agent
 ///////////////////////////////////
+//  Class: env
+//
+class env extends uvm_env;
+    `uvm_component_utils(env);
+
+    //  Constructor: new
+    function new(input string inst = "env", uvm_component c);
+        super.new(inst, c);
+    endfunction: new
+
+    agent a; 
+    sco s;
+
+    /*---  UVM Build Phases            ---*/
+    /*------------------------------------*/
+    //  Function: build_phase
+    virtual function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        a = agent::type_id::create("a", this);
+        s = sco::type_id::create("s", this);
+    endfunction
+
+    virtual function void connect_phasse(uvm_phase phase);
+        super.connect_phase(phase);
+        a.m.send.connect(s.recv);
+    endfunction
+
+endclass: env
+
+class test extends uvm_test
+    `uvm_object_utils(test)
+
+    env e;
+    generator gen;
+
+    virtual function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        e = env::type_id::create("e", this);
+        gen = generator::type_id::create("gen");
+    endfunction
+
+    virtual task run_phase(uvm_phase phase);
+        phase.raise_objection(this);
+        gen.start(e.a.seqr);
+        #20;
+        phase.drop_objection(this);
+    endtask
+
+endclass
+
+module tb;
+
+    mul_if mif();
+
+    mul dut (
+                .a(mif.a),
+                .b(mif.b),
+                .y(mif.y)
+                             );
+
+
+    initial begin 
+        begin
+            uvm_config_db#(virtual mul_if)::set(null, "*", "mif", mif);
+            run_test("test");
+        end
+        initial begin 
+            $dumpfile("dump.vcd");
+            $dumpvars;
+        end
+    end
+
+endmodule
